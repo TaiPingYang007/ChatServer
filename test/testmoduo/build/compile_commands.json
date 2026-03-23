@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/testmoduo/build",
+  "command": "/usr/bin/c++   -std=gnu++17 -g -Wall -o CMakeFiles/server.dir/muduo_server.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/testmoduo/muduo_server.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/testmoduo/muduo_server.cpp",
+  "output": "CMakeFiles/server.dir/muduo_server.cpp.o"
+}
+]

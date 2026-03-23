@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/server.dir/muduo_server.cpp.o -o /home/taipingyang/learn/cpp_project/02_cluster_chat_server/testmoduo/bin/server  -lmymuduo -lpthread 
