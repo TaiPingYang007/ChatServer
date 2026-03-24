@@ -28,7 +28,7 @@ public:
   bool unsubscribe(int channel);
 
   // 在独立线程中接收订阅通道中的消息
-  void observer_channel_messagee();
+  void observer_channel_message();
 
   // 初始化向业务层上报通道消息的回调对象
   void init_notify_handler(std::function<void(int, const std::string &)> fn);

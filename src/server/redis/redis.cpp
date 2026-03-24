@@ -32,7 +32,7 @@ bool Redis::connect() {
   }
 
   // 在单独的线程中，监听通道上的事件
-  std::thread t([this]() { observer_channel_messagee(); });
+  std::thread t([this]() { observer_channel_message(); });
   t.detach();
 
   std::cout << "connect redis-server success!\n";
@@ -98,7 +98,7 @@ bool Redis::unsubscribe(int channel) {
 }
 
 // 在独立线程中接收订阅通道中的消息
-void Redis::observer_channel_messagee() {
+void Redis::observer_channel_message() {
   redisReply *reply = nullptr;
 
   // 只有当业务层（ChatService）已经注册了回调以后，我们才调用它！
