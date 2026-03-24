@@ -11,7 +11,7 @@
 * **中间件架构**：
   * **Nginx**：配置 `stream` 模块实现纯 TCP 长连接的客户端负载均衡。
   * **Redis**：独立解耦的消息队列，通过 `hiredis` 实现跨节点的单聊/群聊消息精准路由。
-* **构建系统**：CMake 跨平台构建
+* **构建系统**：CMake 跨平台构建 + 自动化 Shell 脚本
 
 ## 📂 核心目录结构
 ```text
@@ -19,10 +19,10 @@ ChatServer/
 ├── bin/                    # 编译生成的可执行文件 (ChatServer, ChatClient)
 ├── build/                  # CMake 外部构建目录 (被 gitignore 拦截)
 ├── include/                # 项目核心头文件
-│   └── server/             # 包含 db, model, redis 等业务头文件
 ├── src/                    # 项目源文件
-│   ├── server/             # 服务端核心逻辑 (ChatServer, ChatService 等)
-│   └── client/             # 客户端核心逻辑 (ChatClient)
+│   ├── server/             # 服务端核心逻辑
+│   └── client/             # 客户端核心逻辑
+├── autobuild.sh            # 一键自动化编译脚本
 ├── CMakeLists.txt          # 顶层构建脚本
 └── README.md               # 项目说明文档
 ```
@@ -37,28 +37,25 @@ ChatServer/
 * `Nginx` (需源码编译并激活 `--with-stream` 模块)
 
 ## 🚀 极速构建 (Build)
-本项目采用标准的大厂 CMake 外部构建规范，确保源码目录的绝对纯净。
+本项目提供了一键自动化编译脚本，彻底解放双手，实现极速构建。
 
 ```bash
 # 1. 克隆项目到本地
 git clone git@github.com:TaiPingYang007/ChatServer.git
 cd ChatServer
 
-# 2. 创建独立构建目录
-mkdir build && cd build
-
-# 3. 编译并生成可执行文件
-cmake ..
-make
+# 2. 赋予脚本执行权限并一键编译
+chmod +x autobuild.sh
+./autobuild.sh
 ```
-*编译成功后，可执行文件将自动挂载到项目根目录的 `bin` 文件夹下。*
+*编译成功后，可执行文件 `ChatServer` 和 `ChatClient` 将自动生成在项目根目录的 `bin` 文件夹下。*
 
 ## 🏃 运行指南 (Run)
 
 **1. 唤醒基础设施**
 * 确保本地 MySQL 服务运行，并导入项目所需的数据库表结构。
 * 确保 Redis 服务已在后台启动。
-* 启动 Nginx 代理网关（监听统一端口，如 8000）：
+* 启动 Nginx 代理网关（监听统一网关端口，如 8000）：
 ```bash
 sudo /usr/local/nginx/sbin/nginx
 ```
@@ -72,7 +69,7 @@ cd bin
 ```
 
 **3. 启动客户端集群接入**
-用户无需关心后端有多少台服务器，直接向 Nginx 网关发起 TCP 连接：
+用户无需关心后端有多少台服务器，直接向 Nginx 网关发起 TCP 连接即可：
 ```bash
 cd bin
 ./ChatClient 127.0.0.1 8000
