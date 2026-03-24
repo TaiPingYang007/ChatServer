@@ -25,26 +25,21 @@ ChatServer/
 │   └── client/             # 客户端核心逻辑 (ChatClient)
 ├── CMakeLists.txt          # 顶层构建脚本
 └── README.md               # 项目说明文档
+```
 
-⚙️ 环境依赖 (Prerequisites)
+## ⚙️ 环境依赖 (Prerequisites)
 在编译运行本项目之前，请确保您的 Linux (Ubuntu) 环境已安装以下基础组件：
+* `CMake` ( >= 3.10 )
+* `GCC/G++` (支持 C++11 标准)
+* `Muduo` 高并发网络库
+* `MySQL` 服务端及开发库 (`libmysqlclient-dev`)
+* `Redis` 服务端及 C 客户端库 (`hiredis`)
+* `Nginx` (需源码编译并激活 `--with-stream` 模块)
 
-CMake ( >= 3.10 )
+## 🚀 极速构建 (Build)
+本项目采用标准的大厂 CMake 外部构建规范，确保源码目录的绝对纯净。
 
-GCC/G++ (支持 C++11 标准)
-
-Muduo 高并发网络库
-
-MySQL 服务端及开发库 (libmysqlclient-dev)
-
-Redis 服务端及 C 客户端库 (hiredis)
-
-Nginx (需源码编译并激活 --with-stream 模块)
-
-🚀 极速构建 (Build)
-本项目采用标准的 CMake 外部构建规范，确保源码目录的绝对纯净。
-
-Bash
+```bash
 # 1. 克隆项目到本地
 git clone git@github.com:TaiPingYang007/ChatServer.git
 cd ChatServer
@@ -55,24 +50,30 @@ mkdir build && cd build
 # 3. 编译并生成可执行文件
 cmake ..
 make
-编译成功后，可执行文件将自动挂载到项目根目录的 bin 文件夹下。
+```
+*编译成功后，可执行文件将自动挂载到项目根目录的 `bin` 文件夹下。*
 
-🏃 运行指南 (Run)
-1. 唤醒基础设施
-确保本地 MySQL 服务运行，并导入项目所需的数据库表结构。
-确保 Redis 服务已在后台启动。
-启动 Nginx 代理网关（监听统一端口，如 8000）：
+## 🏃 运行指南 (Run)
+
+**1. 唤醒基础设施**
+* 确保本地 MySQL 服务运行，并导入项目所需的数据库表结构。
+* 确保 Redis 服务已在后台启动。
+* 启动 Nginx 代理网关（监听统一端口，如 8000）：
+```bash
 sudo /usr/local/nginx/sbin/nginx
+```
 
-2. 启动集群节点
+**2. 启动集群节点**
 打开多个终端，启动多个 ChatServer 实例，挂载在不同的端口上：
-
+```bash
 cd bin
 ./ChatServer 127.0.0.1 6000
 ./ChatServer 127.0.0.1 6002
+```
 
-3. 启动客户端集群接入
+**3. 启动客户端集群接入**
 用户无需关心后端有多少台服务器，直接向 Nginx 网关发起 TCP 连接：
-
+```bash
 cd bin
 ./ChatClient 127.0.0.1 8000
+```
