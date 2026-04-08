@@ -20,11 +20,12 @@ enum class EnMsgType : uint8_t {
   ADD_FRIEND_HANDLE = 9,  // 处理好友申请(同意/拒绝)反馈给服务器
   ADD_FRIEND_RESPONSE = 10, // 服务器统一返回给A的响应结果
 
-  CREATE_GROUP_MSG = 11, // 创建群组消息
-  ADD_GROUP_MSG = 12,    // 加入群组消息
-  ADD_GROUP_HANDLE = 13, // 处理加群申请(同意/拒绝)反馈给服务器
-  ADD_GROUP_RESPONSE = 14, // 服务器统一返回给请求加群用户的响应结果
-  GROUP_CHAT_MSG = 15, // 群聊消息
+  CREATE_GROUP_MSG = 11,     // 创建群组消息
+  CREATE_GROUP_MSG_ACK = 12, // 群组响应消息
+  ADD_GROUP_MSG = 13,        // 加入群组消息
+  ADD_GROUP_HANDLE = 14, // 处理加群申请(同意/拒绝)反馈给服务器
+  ADD_GROUP_RESPONSE = 15, // 服务器统一返回给请求加群用户的响应结果
+  GROUP_CHAT_MSG = 16, // 群聊消息
 };
 
 #endif

@@ -1,3 +1,0 @@
-/home/taipingyang/learn/cpp_project/02_cluster_chat_server/testmoduo/build/CMakeFiles/server.dir
-/home/taipingyang/learn/cpp_project/02_cluster_chat_server/testmoduo/build/CMakeFiles/edit_cache.dir
-/home/taipingyang/learn/cpp_project/02_cluster_chat_server/testmoduo/build/CMakeFiles/rebuild_cache.dir

@@ -4,16 +4,20 @@
 #include "../../include/server/redis/redis.hpp"
 #include "model/friendmodel.hpp"
 #include "model/groupmodel.hpp"
+#include "../../include/server/model/friendrequestmodel.hpp"
+#include "../../include/server/model/grouprequestmodel.hpp"
 #include "model/offlinemessagemodel.hpp"
 #include "model/usermodel.hpp"
 #include <mutex>
-#include <mymuduo/Callbacks.h>
-#include <mymuduo/Logger.h>
-#include <mymuduo/TcpConnection.h>
-#include <mymuduo/Timestamp.h>
+#include <muduo/net/Callbacks.h>
+#include <muduo/net/TcpConnection.h>
+#include <muduo/base/Timestamp.h>
 #include <nlohmann/json.hpp>
 #include <sys/socket.h>
 #include <unordered_map>
+
+using muduo::net::TcpConnectionPtr;
+using muduo::Timestamp;
 
 // 表示处理消息的时间回调的方法类型
 using MsgHandler = std::function<void(const TcpConnectionPtr &conn,
@@ -48,14 +52,11 @@ public:
   // 创建群组业务
   void createGroup(const TcpConnectionPtr &conn, nlohmann::json &js,
                    Timestamp time);
-  // 加入群组业务
+  // 请求加入群组业务
   void addGroup(const TcpConnectionPtr &conn, nlohmann::json &js,
                 Timestamp time);
-  // 同意加入群组业务
-  void addGroupAccept(const TcpConnectionPtr &conn, nlohmann::json &js,
-                      Timestamp time);
-  // 拒绝加入群组业务
-  void addGroupReject(const TcpConnectionPtr &conn, nlohmann::json &js,
+  // 处理加入群组业务
+  void addGroupHandle(const TcpConnectionPtr &conn, nlohmann::json &js,
                       Timestamp time);
   // 群聊业务
   void groupChat(const TcpConnectionPtr &conn, nlohmann::json &js,
@@ -76,11 +77,16 @@ public:
 private:
   ChatService();
 
+  // 将消息投递给目标用户（本机连接 → Redis 跨服 → 离线存储）
+  void deliverMessage(int targetId, const std::string &payload);
+
   // 数据操作类对象
   UserModel _userModel;
   OfflineMsgModel _offlineMsgModel;
   FriendModel _friendModel;
   GroupModel _groupModel;
+  FriendRequestModel _friendRequestModel;
+  GroupRequestModel _groupRequestModel;
 
   // redis操作对象
   Redis _redis;

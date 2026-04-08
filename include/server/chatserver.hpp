@@ -1,9 +1,20 @@
 #ifndef CHART_SERVER_HPP
 #define CHART_SERVER_HPP
 
-#include <mymuduo/EventLoop.h>
-#include <mymuduo/TcpServer.h>
+#include <muduo/net/EventLoop.h>
+#include <muduo/net/TcpServer.h>
 #include <nlohmann/json.hpp>
+#include <unordered_map>
+#include <string>
+#include <mutex>
+
+// 引入 muduo 命名空间中的网络类型，避免代码中到处写 muduo::net::
+using muduo::net::Buffer;
+using muduo::net::EventLoop;
+using muduo::net::InetAddress;
+using muduo::net::TcpConnectionPtr;
+using muduo::net::TcpServer;
+using muduo::Timestamp; // Timestamp 在 muduo:: 而非 muduo::net::
 
 // 聊天服务器的主类
 class ChatServer {
@@ -17,6 +28,11 @@ public:
 private:
   // 上报连接相关的回调函数
   void onConnection(const TcpConnectionPtr &conn);
+
+  // key: TcpConnectionPtr value: 连接尚未处理完的字符串缓冲区
+  std::unordered_map<TcpConnectionPtr, std::string> _recvBufMap;
+  // 保护_recvBufMap的线程安全  
+  std::mutex _recvBufMutex;
 
   // 上报读写事件相关信息的回调函数
   void onMessage(const TcpConnectionPtr &conn, Buffer *buf, Timestamp time);

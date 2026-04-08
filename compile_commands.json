@@ -1,0 +1,80 @@
+[
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/main.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/main.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/main.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/main.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/logger.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/logger.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/logger.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/logger.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/chatserver.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/chatserver.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/chatserver.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/chatserver.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/chatservice.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/chatservice.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/chatservice.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/chatservice.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/db/db.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/db/db.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/db/db.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/db/db.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/model/usermodel.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/usermodel.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/usermodel.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/model/usermodel.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/model/offlinemessagemodel.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/offlinemessagemodel.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/offlinemessagemodel.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/model/offlinemessagemodel.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/model/friendmodel.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/friendmodel.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/friendmodel.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/model/friendmodel.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/model/friendrequestmodel.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/friendrequestmodel.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/friendrequestmodel.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/model/friendrequestmodel.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/model/groupmodel.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/groupmodel.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/groupmodel.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/model/groupmodel.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/model/grouprequestmodel.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/grouprequestmodel.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/model/grouprequestmodel.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/model/grouprequestmodel.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/server",
+  "command": "/usr/bin/c++ -DCHATSERVER_LOG_DIR=\\\"/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/bin\\\" -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/model -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/db -I/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/include/server/redis -I/home/taipingyang/thirdparty/muduo/include -Wall -g -o CMakeFiles/ChatServer.dir/redis/redis.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/redis/redis.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/server/redis/redis.cpp",
+  "output": "src/server/CMakeFiles/ChatServer.dir/redis/redis.cpp.o"
+},
+{
+  "directory": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/build/src/client",
+  "command": "/usr/bin/c++   -Wall -g -o CMakeFiles/ChatClient.dir/main.cpp.o -c /home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/client/main.cpp",
+  "file": "/home/taipingyang/learn/cpp_project/02_cluster_chat_server/ChatServer/src/client/main.cpp",
+  "output": "src/client/CMakeFiles/ChatClient.dir/main.cpp.o"
+}
+]

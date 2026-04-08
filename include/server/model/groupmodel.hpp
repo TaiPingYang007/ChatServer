@@ -1,19 +1,26 @@
 #ifndef GROUPMODEL_H
 #define GROUPMODEL_H
 
+#include "./requestresult.hpp"
 #include "group.hpp"
 
 // 维护群组信息的操作接口方法
 class GroupModel {
 public:
+  // // 判断群组是否已经存在
+  BoolQueryResult isGroupExist(std::string name);
+  BoolQueryResult isGroupExist(int groupid);
+
   // 创建群组
   bool createGroup(Group &group);
+
+  BoolQueryResult isUserInGroup(int userid, int groupid);
 
   // 加入群组
   void addGroup(int userid, int groupid, std::string role);
 
   // 获取群主id
-  int queryGroupOwnerId(int groupid);
+  IntQueryResult queryGroupOwnerId(int groupid);
 
   // 获取群组名
   std::string queryGroupName(int groupid);

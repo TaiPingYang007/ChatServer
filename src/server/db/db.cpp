@@ -1,8 +1,8 @@
 #include "../../../include/server/db/db.h"
-#include <mymuduo/Logger.h>
+#include "../../../include/server/logger.h"
 
 // 数据库配置信息
-static std::string server = "192.168.88.128";
+static std::string server = "192.168.195.128";
 static std::string user = "tpy";
 static std::string password = "wang112233";
 static std::string dbname = "ChatServer";
@@ -20,7 +20,7 @@ bool MySQL::connect() {
     LOG_INFO("connect mysql success!");
     return true;
   } else {
-    LOG_INFO("connect mysql fail!");
+    LOG_ERROR("connect mysql fail!");
     return false;
   }
 }
@@ -28,7 +28,8 @@ bool MySQL::connect() {
 bool MySQL::update(std::string sql) {
   if (mysql_query(_conn, sql.c_str())) {
     // __FILE__代表当前文件名(字符串)，__LINE__代表当前行号(整数)
-    LOG_INFO("%s:%d:%s更新失败！\n", __FILE__, __LINE__, sql.c_str());
+    LOG_ERROR("%s:%d:%s更新失败！ mysql error: %s", __FILE__, __LINE__,
+              sql.c_str(), mysql_error(_conn));
     return false;
   }
   return true;
@@ -37,7 +38,8 @@ bool MySQL::update(std::string sql) {
 // 查询操作
 MYSQL_RES *MySQL::query(std::string sql) {
   if (mysql_query(_conn, sql.c_str())) {
-    LOG_INFO("%s:%d:%s查询失败！\n", __FILE__, __LINE__, sql.c_str());
+    LOG_ERROR("%s:%d:%s查询失败！ mysql error: %s", __FILE__, __LINE__,
+              sql.c_str(), mysql_error(_conn));
     return nullptr;
   }
   return mysql_store_result(_conn);
