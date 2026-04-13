@@ -6,24 +6,21 @@ project(ChatServer CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 3. 强制导出编译命令，防止 VS Code 再次变成瞎子 (极度重要)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# 4. Modern CMake 做法：使用独立指令添加编译选项，抛弃 set 拼接！
+# 3. Modern CMake 做法：使用独立指令添加编译选项，抛弃 set 拼接！
 add_compile_options(-g -Wall)
 
-# 5. 定义源文件 (不要加前面的 ./，容易引发路径强迫症问题)
+# 4. 定义源文件 (不要加前面的 ./，容易引发路径强迫症问题)
 set(SRC_LIST 
     ./muduo_server.cpp
 )
 
-# 6. 设置可执行文件最终存储路径
+# 5. 设置可执行文件最终存储路径
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-# 7. 生成可执行文件
+# 6. 生成可执行文件
 add_executable(server ${SRC_LIST})
 
-# 8. 链接依赖库
+# 7. 链接依赖库
 set(MUDUO_LIB_DIR /home/taipingyang/thirdparty/muduo/lib)
 
 target_include_directories(server PRIVATE
