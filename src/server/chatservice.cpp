@@ -14,44 +14,44 @@ ChatService *ChatService::instance() {
 ChatService::ChatService() {
   _msgHandlerMap.insert(
       {static_cast<int>(EnMsgType::LOGIN_MSG),
-       [this](const TcpConnectionPtr &conn, nlohmann::json &js,
-              Timestamp time) { login(conn, js, time); }});
+       [this](const muduo::net::TcpConnectionPtr &conn, nlohmann::json &js,
+              muduo::Timestamp time) { login(conn, js, time); }});
   _msgHandlerMap.insert(
       {static_cast<int>(EnMsgType::LOGINOUT_MSG),
-       [this](const TcpConnectionPtr &conn, nlohmann::json &js,
-              Timestamp time) { loginout(conn, js, time); }});
+       [this](const muduo::net::TcpConnectionPtr &conn, nlohmann::json &js,
+              muduo::Timestamp time) { loginout(conn, js, time); }});
   _msgHandlerMap.insert(
       {static_cast<int>(EnMsgType::REG_MSG),
-       [this](const TcpConnectionPtr &conn, nlohmann::json &js,
-              Timestamp time) { reg(conn, js, time); }});
+       [this](const muduo::net::TcpConnectionPtr &conn, nlohmann::json &js,
+              muduo::Timestamp time) { reg(conn, js, time); }});
   _msgHandlerMap.insert(
       {static_cast<int>(EnMsgType::ONE_CHAT_MSG),
-       [this](const TcpConnectionPtr &conn, nlohmann::json &js,
-              Timestamp time) { oneChat(conn, js, time); }});
+       [this](const muduo::net::TcpConnectionPtr &conn, nlohmann::json &js,
+              muduo::Timestamp time) { oneChat(conn, js, time); }});
   _msgHandlerMap.insert(
       {static_cast<int>(EnMsgType::ADD_FRIEND_REQUEST),
-       [this](const TcpConnectionPtr &conn, nlohmann::json &js,
-              Timestamp time) { addFriend(conn, js, time); }});
+       [this](const muduo::net::TcpConnectionPtr &conn, nlohmann::json &js,
+              muduo::Timestamp time) { addFriend(conn, js, time); }});
   _msgHandlerMap.insert(
       {static_cast<int>(EnMsgType::ADD_FRIEND_HANDLE),
-       [this](const TcpConnectionPtr &conn, nlohmann::json &js,
-              Timestamp time) { addFriendHandle(conn, js, time); }});
+       [this](const muduo::net::TcpConnectionPtr &conn, nlohmann::json &js,
+              muduo::Timestamp time) { addFriendHandle(conn, js, time); }});
   _msgHandlerMap.insert(
       {static_cast<int>(EnMsgType::CREATE_GROUP_MSG),
-       [this](const TcpConnectionPtr &conn, nlohmann::json &js,
-              Timestamp time) { createGroup(conn, js, time); }});
+       [this](const muduo::net::TcpConnectionPtr &conn, nlohmann::json &js,
+              muduo::Timestamp time) { createGroup(conn, js, time); }});
   _msgHandlerMap.insert(
       {static_cast<int>(EnMsgType::ADD_GROUP_MSG),
-       [this](const TcpConnectionPtr &conn, nlohmann::json &js,
-              Timestamp time) { addGroup(conn, js, time); }});
+       [this](const muduo::net::TcpConnectionPtr &conn, nlohmann::json &js,
+              muduo::Timestamp time) { addGroup(conn, js, time); }});
   _msgHandlerMap.insert(
       {static_cast<int>(EnMsgType::ADD_GROUP_HANDLE),
-       [this](const TcpConnectionPtr &conn, nlohmann::json &js,
-              Timestamp time) { addGroupHandle(conn, js, time); }});
+       [this](const muduo::net::TcpConnectionPtr &conn, nlohmann::json &js,
+              muduo::Timestamp time) { addGroupHandle(conn, js, time); }});
   _msgHandlerMap.insert(
       {static_cast<int>(EnMsgType::GROUP_CHAT_MSG),
-       [this](const TcpConnectionPtr &conn, nlohmann::json &js,
-              Timestamp time) { groupChat(conn, js, time); }});
+       [this](const muduo::net::TcpConnectionPtr &conn, nlohmann::json &js,
+              muduo::Timestamp time) { groupChat(conn, js, time); }});
 
   if (_redis.start([this](int userid, std::string msg) {
         ChatService::handleRedisSubscribeMessage(userid, msg);
@@ -91,12 +91,13 @@ void ChatService::reset() {
 
 // 获取消息对应的处理器
 MsgHandler ChatService::getHandler(int msgid) {
-  // 记录错误日志（使用muduo库日志打印），msgid没有对应的事件处理回调
+  // 记录错误日志，msgid没有对应的事件处理回调
   // 如果是不存在的事件处理回调，会在_msgHandlerMap容器中添加一对新的数据，所以需要提前判断
   auto it = _msgHandlerMap.find(msgid);
   if (it == _msgHandlerMap.end()) {
     // 返回一个默认的处理器，空操作
-    return [=](auto a, auto b, auto c) {
+    return [=](const muduo::net::TcpConnectionPtr &, nlohmann::json &,
+               muduo::Timestamp) {
       LOG_ERROR("msgid：%d can not find handler!", msgid);
     };
   } else {
@@ -111,8 +112,8 @@ MsgHandler ChatService::getHandler(int msgid) {
   密码错误，2
   用户不存在，3
 */
-void ChatService::login(const TcpConnectionPtr &conn, nlohmann::json &js,
-                        Timestamp time) {
+void ChatService::login(const muduo::net::TcpConnectionPtr &conn,
+                        nlohmann::json &js, muduo::Timestamp time) {
   std::string name = js["name"];
   std::string password = js["password"];
 
@@ -216,8 +217,8 @@ void ChatService::login(const TcpConnectionPtr &conn, nlohmann::json &js,
 }
 
 // 处理登出业务
-void ChatService::loginout(const TcpConnectionPtr &conn, nlohmann::json &js,
-                           Timestamp time) {
+void ChatService::loginout(const muduo::net::TcpConnectionPtr &conn,
+                           nlohmann::json &js, muduo::Timestamp time) {
   int userid = js["userid"].get<int>();
 
   // 操作_UserConnMap表
@@ -238,8 +239,8 @@ void ChatService::loginout(const TcpConnectionPtr &conn, nlohmann::json &js,
 }
 
 // 处理注册业务 name password
-void ChatService::reg(const TcpConnectionPtr &conn, nlohmann::json &js,
-                      Timestamp time) {
+void ChatService::reg(const muduo::net::TcpConnectionPtr &conn,
+                      nlohmann::json &js, muduo::Timestamp time) {
   std::string name = js["name"];
   std::string password = js["password"];
 
@@ -264,7 +265,8 @@ void ChatService::reg(const TcpConnectionPtr &conn, nlohmann::json &js,
 }
 
 // 处理客户端异常退出
-void ChatService::clientCloseException(const TcpConnectionPtr &conn) {
+void ChatService::clientCloseException(
+    const muduo::net::TcpConnectionPtr &conn) {
   // 创建user用户，用于存储下线用户的ID信息和修改状态
   User user;
   // 1、加锁，防止资源竞争
@@ -274,7 +276,7 @@ void ChatService::clientCloseException(const TcpConnectionPtr &conn) {
     // 2、遍历_userConnMap容器，找到对应的用户
     for (auto &entry : _userConnMap) {
       if (entry.second == conn) {
-        // 3、将对应的键值对_userConnMap中删除
+        // 3、将对应的键值对从_userConnMap中删除
         user.setId(entry.first);
         _userConnMap.erase(entry.first);
         break;
@@ -282,37 +284,27 @@ void ChatService::clientCloseException(const TcpConnectionPtr &conn) {
     }
   }
 
-  // 取消订阅该用户的消息频道
-  // _redis.unsubscribe(user.getId());
-  // 客户端连接后没登录就断开，会往 Redis 发送无效的 UNSUBSCRIBE -1
+  // 客户端连接后没登录就断开，user.getId() == -1，无需操作
   if (user.getId() != -1) {
     _redis.unsubscribe(user.getId());
-    user.setState("offline");
-    _userModel.updateState(user);
-  }
-
-  // 4、更新用户的状态信息
-  if (user.getId() != -1) {
     user.setState("offline");
     _userModel.updateState(user);
   }
 }
 
 // 一对一聊天业务
-void ChatService::oneChat(const TcpConnectionPtr &conn, nlohmann::json &js,
-                          Timestamp time) {
+void ChatService::oneChat(const muduo::net::TcpConnectionPtr &conn,
+                          nlohmann::json &js, muduo::Timestamp time) {
   int userid = js["userid"].get<int>();
   int toid = js["to"].get<int>();
 
   if (!_friendModel.isFriend(userid, toid)) {
     // userid和toid之间不是好友，不允许发消息
     nlohmann::json response;
-
     response["errno"] = 1;
     response["msgid"] = static_cast<int>(EnMsgType::ONE_CHAT_MSG_ACK);
     response["errmsg"] =
         "You are not friends with this user. Message cannot be sent!";
-
     conn->send(response.dump() + "\n");
     return;
   }
@@ -340,8 +332,8 @@ void ChatService::oneChat(const TcpConnectionPtr &conn, nlohmann::json &js,
 }
 
 // 添加好友业务请求
-void ChatService::addFriend(const TcpConnectionPtr &conn, nlohmann::json &js,
-                            Timestamp time) {
+void ChatService::addFriend(const muduo::net::TcpConnectionPtr &conn,
+                            nlohmann::json &js, muduo::Timestamp time) {
   int userid = js["userid"].get<int>();
   int friendid = js["friendid"].get<int>();
 
@@ -357,7 +349,6 @@ void ChatService::addFriend(const TcpConnectionPtr &conn, nlohmann::json &js,
 
   // 判断好友是否存在
   if (!_friendModel.isUserExist(friendid)) {
-    // 好友不存在
     nlohmann::json response;
     response["msgid"] = static_cast<int>(EnMsgType::ADD_FRIEND_RESPONSE);
     response["errno"] = 1;
@@ -366,7 +357,7 @@ void ChatService::addFriend(const TcpConnectionPtr &conn, nlohmann::json &js,
     return;
   }
 
-  // 判断是否已经是好友了，是否已经是已接受状态
+  // 判断是否已经是好友了
   if (_friendModel.isFriend(userid, friendid)) {
     nlohmann::json response;
     response["msgid"] = static_cast<int>(EnMsgType::ADD_FRIEND_RESPONSE);
@@ -380,7 +371,6 @@ void ChatService::addFriend(const TcpConnectionPtr &conn, nlohmann::json &js,
       _friendRequestModel.queryRequestStatus(userid, friendid);
 
   if (result.status == QueryStatus::DbError) {
-    // 系统繁忙
     nlohmann::json response;
     response["msgid"] = static_cast<int>(EnMsgType::ADD_FRIEND_RESPONSE);
     response["errno"] = 2;
@@ -428,8 +418,8 @@ void ChatService::addFriend(const TcpConnectionPtr &conn, nlohmann::json &js,
 }
 
 // 处理同意/拒绝添加好友的业务
-void ChatService::addFriendHandle(const TcpConnectionPtr &conn,
-                                  nlohmann::json &js, Timestamp time) {
+void ChatService::addFriendHandle(const muduo::net::TcpConnectionPtr &conn,
+                                  nlohmann::json &js, muduo::Timestamp time) {
   int userid = js["userid"].get<int>();     // 申请人 A 的 ID
   int friendid = js["friendid"].get<int>(); // 被申请人 B 的 ID
   std::string action = js["action"];
@@ -440,21 +430,17 @@ void ChatService::addFriendHandle(const TcpConnectionPtr &conn,
   BoolQueryResult result =
       _friendRequestModel.isPendingRequest(userid, friendid);
   if (result.status == QueryStatus::DbError) {
-    // 系统繁忙
     response["errno"] = 2;
     response["errmsg"] = "System busy, please try again later.";
     conn->send(response.dump() + "\n");
     return;
-  } else if (result.status == QueryStatus::NotFound) // false
-  {
+  } else if (result.status == QueryStatus::NotFound) {
     // 不是pending状态
     response["errno"] = 4;
     response["errmsg"] = "The user has not sent a friend request to you!";
-
     conn->send(response.dump() + "\n");
     return;
-  } else if (result.status == QueryStatus::Ok) // true
-  {
+  } else if (result.status == QueryStatus::Ok) {
     // pending状态
     if (action == "accept") {
       // 更新好友请求表
@@ -465,7 +451,6 @@ void ChatService::addFriendHandle(const TcpConnectionPtr &conn,
         conn->send(response.dump() + "\n");
         return;
       }
-
       // 更新好友关系表
       _friendModel.insert(userid, friendid);
       _friendModel.insert(friendid, userid);
@@ -473,10 +458,8 @@ void ChatService::addFriendHandle(const TcpConnectionPtr &conn,
       response["errmsg"] =
           "The user has accepted your friend request. You can now chat!";
     } else {
-      // 拒绝
-      // 更新好友请求表
+      // 拒绝，更新好友请求表
       _friendRequestModel.updateRequestStatus(userid, friendid, "rejected");
-
       response["errno"] = 3;
       response["errmsg"] = "The user has declined your friend request.";
     }
@@ -487,29 +470,25 @@ void ChatService::addFriendHandle(const TcpConnectionPtr &conn,
 }
 
 // 创建群组业务 userid(创建人) groupname groupdesc
-void ChatService::createGroup(const TcpConnectionPtr &conn, nlohmann::json &js,
-                              Timestamp time) {
+void ChatService::createGroup(const muduo::net::TcpConnectionPtr &conn,
+                              nlohmann::json &js, muduo::Timestamp time) {
   int userid = js["userid"].get<int>();
   std::string name = js["groupname"];
   std::string groupdesc = js["groupdesc"];
 
   BoolQueryResult result = _groupModel.isGroupExist(name);
   if (result.status == QueryStatus::DbError) {
-    // 系统繁忙
     nlohmann::json response;
     response["msgid"] = static_cast<int>(EnMsgType::CREATE_GROUP_MSG_ACK);
     response["errno"] = 2;
     response["errmsg"] = "System busy, please try again later.";
     conn->send(response.dump() + "\n");
     return;
-  } else if (result.status == QueryStatus::NotFound) // false
-  {
+  } else if (result.status == QueryStatus::NotFound) {
     Group group(-1, name, groupdesc);
-
     nlohmann::json response;
     if (_groupModel.createGroup(group)) {
       _groupModel.addGroup(userid, group.getId(), "creator");
-
       response["msgid"] = static_cast<int>(EnMsgType::CREATE_GROUP_MSG_ACK);
       response["errno"] = 0;
       response["errmsg"] = "Create group success! Your groupid is " +
@@ -520,9 +499,8 @@ void ChatService::createGroup(const TcpConnectionPtr &conn, nlohmann::json &js,
       response["errmsg"] = "Create group failed!";
     }
     conn->send(response.dump() + "\n");
-  } else if (result.status == QueryStatus::Ok) // true
-  {
-    // 组群名已存在或者其他错误
+  } else if (result.status == QueryStatus::Ok) {
+    // 群名已存在
     nlohmann::json response;
     response["msgid"] = static_cast<int>(EnMsgType::CREATE_GROUP_MSG_ACK);
     response["errno"] = 2;
@@ -533,9 +511,9 @@ void ChatService::createGroup(const TcpConnectionPtr &conn, nlohmann::json &js,
 }
 
 // 加入群组业务
-void ChatService::addGroup(const TcpConnectionPtr &conn, nlohmann::json &js,
-                           Timestamp time) {
-  int userid = js["userid"].get<int>();
+void ChatService::addGroup(const muduo::net::TcpConnectionPtr &conn,
+                           nlohmann::json &js, muduo::Timestamp time) {
+  int userid  = js["userid"].get<int>();
   int groupid = js["groupid"].get<int>();
 
   // 检查用户是否已在群中
@@ -605,8 +583,7 @@ void ChatService::addGroup(const TcpConnectionPtr &conn, nlohmann::json &js,
       nlohmann::json response;
       response["msgid"] = static_cast<int>(EnMsgType::ADD_GROUP_RESPONSE);
       response["errno"] = 1;
-      response["errmsg"] =
-          "The request has been sent, please wait for approval!";
+      response["errmsg"] = "The request has been sent, please wait for approval!";
       conn->send(response.dump() + "\n");
       return;
     } else if (result.value == "rejected") {
@@ -648,15 +625,14 @@ void ChatService::addGroup(const TcpConnectionPtr &conn, nlohmann::json &js,
 }
 
 // 处理加群申请(同意/拒绝)业务
-void ChatService::addGroupHandle(const TcpConnectionPtr &conn,
-                                 nlohmann::json &js, Timestamp time) {
-  int userid = js["userid"].get<int>();
+void ChatService::addGroupHandle(const muduo::net::TcpConnectionPtr &conn,
+                                 nlohmann::json &js, muduo::Timestamp time) {
+  int userid  = js["userid"].get<int>();
   int groupid = js["groupid"].get<int>();
 
   nlohmann::json response;
   // 判断当前的请求状态，如果不是pending状态，不允许同意或拒绝
   if (_groupRequestModel.isPendingRequest(userid, groupid)) {
-    // 接受群主选择
     std::string action = js["action"];
 
     response["msgid"] = static_cast<int>(EnMsgType::ADD_GROUP_RESPONSE);
@@ -689,10 +665,10 @@ void ChatService::addGroupHandle(const TcpConnectionPtr &conn,
 }
 
 // 群聊业务
-void ChatService::groupChat(const TcpConnectionPtr &conn, nlohmann::json &js,
-                            Timestamp time) {
+void ChatService::groupChat(const muduo::net::TcpConnectionPtr &conn,
+                            nlohmann::json &js, muduo::Timestamp time) {
   // 获取群聊发送者id
-  int userid = js["userid"].get<int>();
+  int userid  = js["userid"].get<int>();
   // 获取群聊id
   int groupid = js["groupid"].get<int>();
 
@@ -701,7 +677,7 @@ void ChatService::groupChat(const TcpConnectionPtr &conn, nlohmann::json &js,
   // 获取群聊内的其他成员id
   std::vector<int> useridVec = _groupModel.queryGroupUsers(userid, groupid);
   std::string payload = js.dump();
-  std::vector<TcpConnectionPtr> localConnections;
+  std::vector<muduo::net::TcpConnectionPtr> localConnections;
   std::vector<int> remoteUserIds;
 
   // 先在锁内做本地连接快照，避免持锁做 IO
@@ -717,7 +693,7 @@ void ChatService::groupChat(const TcpConnectionPtr &conn, nlohmann::json &js,
     }
   }
 
-  for (const TcpConnectionPtr &connection : localConnections) {
+  for (const muduo::net::TcpConnectionPtr &connection : localConnections) {
     connection->send(payload + "\n");
   }
 

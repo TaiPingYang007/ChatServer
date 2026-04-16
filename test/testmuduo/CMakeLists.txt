@@ -20,16 +20,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 # 6. 生成可执行文件
 add_executable(server ${SRC_LIST})
 
-# 7. 链接依赖库
-set(MUDUO_LIB_DIR /home/taipingyang/thirdparty/muduo/lib)
-
-target_include_directories(server PRIVATE
-    /home/taipingyang/thirdparty/muduo/include
-)
-
+# 7. 链接依赖库（muduo 已装到系统路径 /usr/local，直接用库名）
 target_link_libraries(server
     PRIVATE
-    ${MUDUO_LIB_DIR}/libmuduo_net.a
-    ${MUDUO_LIB_DIR}/libmuduo_base.a
+    muduo_net muduo_base
     pthread
 )

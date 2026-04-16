@@ -36,9 +36,9 @@ int main(int argc, char **argv) {
 
   std::signal(SIGINT, resetHandler);
 
-  EventLoop loop;
+  muduo::net::EventLoop loop;
   // 官方 muduo InetAddress(StringArg ip, uint16_t port) — ip 在前，port 在后
-  InetAddress addr(ip, port);
+  muduo::net::InetAddress addr(ip, port);
 
   ChatServer server(&loop, addr, "ChatServer");
 

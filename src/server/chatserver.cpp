@@ -5,15 +5,19 @@
 #include <mutex>
 
 // 初始化聊天服务系统对象
-ChatServer::ChatServer(EventLoop *loop, const InetAddress &listenAddr,
+ChatServer::ChatServer(muduo::net::EventLoop *loop,
+                       const muduo::net::InetAddress &listenAddr,
                        const std::string &nameArg)
     : _server(loop, listenAddr, nameArg), _loop(loop) {
   // 注册连接回调
   _server.setConnectionCallback(
-      [this](const TcpConnectionPtr conn) { onConnection(conn); });
+      [this](const muduo::net::TcpConnectionPtr &conn) {
+        onConnection(conn);
+      });
   // 注册消息回调
   _server.setMessageCallback(
-      [this](const TcpConnectionPtr conn, Buffer *buf, Timestamp readTime) {
+      [this](const muduo::net::TcpConnectionPtr &conn,
+             muduo::net::Buffer *buf, muduo::Timestamp readTime) {
         onMessage(conn, buf, readTime);
       });
   // 设置线程数量
@@ -24,8 +28,7 @@ ChatServer::ChatServer(EventLoop *loop, const InetAddress &listenAddr,
 void ChatServer::start() { _server.start(); }
 
 // 上报连接相关的回调函数
-void ChatServer::onConnection(const TcpConnectionPtr &conn) {
-
+void ChatServer::onConnection(const muduo::net::TcpConnectionPtr &conn) {
   // 客户端断开连接
   if (!conn->connected()) {
     ChatService::instance()->clientCloseException(conn);
@@ -41,8 +44,8 @@ void ChatServer::onConnection(const TcpConnectionPtr &conn) {
 }
 
 // 上报读写事件相关信息的回调函数
-void ChatServer::onMessage(const TcpConnectionPtr &conn, Buffer *buf,
-                           Timestamp time) {
+void ChatServer::onMessage(const muduo::net::TcpConnectionPtr &conn,
+                           muduo::net::Buffer *buf, muduo::Timestamp time) {
   std::string readbuf = buf->retrieveAllAsString();
 
   // 接收到消息后先放到对应的conn的缓存中

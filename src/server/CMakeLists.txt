@@ -17,24 +17,20 @@ set(
 # 生成可执行文件
 add_executable(ChatServer ${SRC_FILES})
 
-# 头文件挂载
+# 头文件挂载（muduo 已装到 /usr/local/include，无需单独指定）
 target_include_directories(ChatServer PRIVATE
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/include/server
     ${CMAKE_SOURCE_DIR}/include/server/model
     ${CMAKE_SOURCE_DIR}/include/server/db
     ${CMAKE_SOURCE_DIR}/include/server/redis
-    /home/taipingyang/thirdparty/muduo/include
 )
 
 target_compile_definitions(ChatServer PRIVATE
     CHATSERVER_LOG_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
 )
 
-set(MUDUO_LIB_DIR /home/taipingyang/thirdparty/muduo/lib)
-
-# 指定可执行文件以依赖的库文件（静态库，无需 RPATH）
+# 指定可执行文件依赖的库文件（muduo 已装到 /usr/local/lib，直接用库名）
 target_link_libraries(ChatServer PRIVATE
-    ${MUDUO_LIB_DIR}/libmuduo_net.a
-    ${MUDUO_LIB_DIR}/libmuduo_base.a
+    muduo_net muduo_base
     mysqlclient pthread hiredis)
