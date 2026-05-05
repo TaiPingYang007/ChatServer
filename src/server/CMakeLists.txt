@@ -17,7 +17,16 @@ set(
 # 生成可执行文件
 add_executable(ChatServer ${SRC_FILES})
 
-# 头文件挂载（muduo 已装到 /usr/local/include，无需单独指定）
+find_library(CHATSERVER_MYSQLCLIENT_LIBRARY mysqlclient)
+if (NOT CHATSERVER_MYSQLCLIENT_LIBRARY)
+    message(FATAL_ERROR "mysqlclient library not found. Install default-libmysqlclient-dev.")
+endif()
+
+find_library(CHATSERVER_HIREDIS_LIBRARY hiredis)
+if (NOT CHATSERVER_HIREDIS_LIBRARY)
+    message(FATAL_ERROR "hiredis library not found. Install libhiredis-dev.")
+endif()
+
 target_include_directories(ChatServer PRIVATE
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/include/server
@@ -30,7 +39,13 @@ target_compile_definitions(ChatServer PRIVATE
     CHATSERVER_LOG_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
 )
 
-# 指定可执行文件依赖的库文件（muduo 已装到 /usr/local/lib，直接用库名）
+set_target_properties(ChatServer PROPERTIES
+    BUILD_RPATH "${CHATSERVER_MUDUO_LIB_DIR}"
+)
+
 target_link_libraries(ChatServer PRIVATE
-    muduo_net muduo_base
-    mysqlclient pthread hiredis)
+    chatserver_muduo
+    nlohmann_json::nlohmann_json
+    ${CHATSERVER_MYSQLCLIENT_LIBRARY}
+    Threads::Threads
+    ${CHATSERVER_HIREDIS_LIBRARY})

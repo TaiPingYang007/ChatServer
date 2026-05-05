@@ -35,7 +35,7 @@ Client A          Client B
 | 存储层 | MySQL | 用户信息、好友关系、群组、离线消息持久化 |
 | 消息中间件 | Redis (hiredis) | Pub/Sub 实现跨服节点实时消息路由 |
 | 负载均衡 | Nginx stream | 四层 TCP 负载均衡，对用户无感知 |
-| 构建 | CMake + Shell | 外部构建 + 一键编译脚本 |
+| 构建 | CMake + Docker | 由 Docker 镜像构建流程统一编译 |
 
 ---
 
@@ -106,7 +106,10 @@ ChatServer/
 │   ├── server/                     # 服务端实现
 │   └── client/                     # 命令行客户端实现
 ├── bin/                            # 编译产物
-├── autobuild.sh                    # 一键构建脚本
+├── cmake/                          # CMake 依赖接入逻辑
+├── compose.yaml                    # Docker 开发栈（2 个 ChatServer + Redis + Nginx + client）
+├── docker/                         # Redis / Nginx / MySQL schema 配置
+├── scripts/                        # 数据库 bootstrap 脚本
 └── CMakeLists.txt
 ```
 
@@ -116,104 +119,72 @@ ChatServer/
 
 | 依赖 | 版本要求 | 安装参考 |
 |------|---------|---------|
-| GCC/G++ | >= C++11 | `apt install g++` |
-| CMake | >= 3.10 | `apt install cmake` |
-| Muduo | 任意稳定版 | 源码编译安装 |
-| MySQL | >= 5.7 | `apt install libmysqlclient-dev` |
-| Redis + hiredis | 任意稳定版 | `apt install redis-server libhiredis-dev` |
-| Nginx | 需 stream 模块 | 源码编译：`--with-stream` |
+| Docker Engine | 最新稳定版 | 用于运行 ChatServer / Redis / Nginx 容器 |
+| Docker Compose | v2 | `docker compose ...` |
 
 ---
 
 ## 快速开始
 
-### 编译
+本项目当前是 **Docker-only**：官方支持的启动方式只有 Docker Compose，不再维护原生开发入口。
+
+本项目当前默认复用外部共享 MySQL 容器 `mysql_db`，**不会**在本仓库的 `compose.yaml` 中再起一个新的 MySQL。
+
+1. 准备应用配置
 
 ```bash
-git clone https://github.com/TaiPingYang007/ChatServer.git
-cd ChatServer
-chmod +x autobuild.sh
-./autobuild.sh
-# 产物：bin/ChatServer  bin/ChatClient
+cp .env.example .env
 ```
 
-### 数据库初始化
+`.env` 中的默认值已经和 Docker 开发栈对齐：
 
-```sql
-CREATE DATABASE chat;
-USE chat;
-
-CREATE TABLE user (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(50) NOT NULL,
-    state ENUM('online','offline') DEFAULT 'offline'
-);
-
-CREATE TABLE friend (
-    userid INT NOT NULL,
-    friendid INT NOT NULL,
-    PRIMARY KEY(userid, friendid)
-);
-
-CREATE TABLE allgroup (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    groupname VARCHAR(50) NOT NULL UNIQUE,
-    groupdesc VARCHAR(200) DEFAULT ''
-);
-
-CREATE TABLE groupuser (
-    groupid INT NOT NULL,
-    userid INT NOT NULL,
-    grouprole ENUM('creator','normal') DEFAULT 'normal',
-    PRIMARY KEY(groupid, userid)
-);
-
-CREATE TABLE offlinemessage (
-    userid INT NOT NULL,
-    message VARCHAR(500) NOT NULL
-);
-
-CREATE TABLE friendrequest (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    fromid INT NOT NULL,
-    toid INT NOT NULL,
-    status ENUM('pending','accepted','rejected') DEFAULT 'pending'
-);
+```env
+MYSQL_HOST=host.docker.internal
+MYSQL_PORT=3306
+MYSQL_DATABASE=chatserver
+MYSQL_USER=chatserver_app
+MYSQL_PASSWORD=chatserver_dev_password
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_PASSWORD=redis_dev_password
 ```
 
-### 配置 Nginx TCP 负载均衡
-
-在 `nginx.conf` 中添加（`http {}` 块同级）：
-
-```nginx
-stream {
-    upstream ChatServer {
-        server 127.0.0.1:6000 weight=1;
-        server 127.0.0.1:6002 weight=1;
-    }
-    server {
-        listen 8000;
-        proxy_pass ChatServer;
-    }
-}
-```
-
-### 启动集群
+2. 初始化共享 MySQL 中的库、用户、权限和表
 
 ```bash
-# 终端1：节点1
-./bin/ChatServer 127.0.0.1 6000
-
-# 终端2：节点2
-./bin/ChatServer 127.0.0.1 6002
-
-# 启动 Nginx
-sudo /usr/local/nginx/sbin/nginx
-
-# 客户端连接（统一走 Nginx 网关）
-./bin/ChatClient 127.0.0.1 8000
+chmod +x scripts/bootstrap-shared-mysql.sh
+MYSQL_ROOT_PASSWORD=你的_mysql_root_密码 ./scripts/bootstrap-shared-mysql.sh
 ```
+
+脚本会连接正在运行的 `mysql_db` 容器，并完成：
+
+- 创建数据库 `chatserver`
+- 创建应用用户 `chatserver_app`
+- 授权 `chatserver_app` 仅访问 `chatserver`
+- 执行 [`docker/mysql/init/01-init-chatserver.sql`](docker/mysql/init/01-init-chatserver.sql) 中的表结构
+
+3. 启动完整集群开发栈
+
+```bash
+docker compose up --build -d
+```
+
+默认会长期启动 4 个服务：
+
+- `chatserver-1`：监听 `6000`
+- `chatserver-2`：监听 `6002`
+- `redis`：跨节点 Pub/Sub
+- `nginx`：统一 TCP 网关，监听 `8000`
+
+4. 按需启动客户端容器
+
+```bash
+docker compose run --rm client
+```
+
+这个 `client` 服务通过 compose profile 标记为按需工具，所以不会随着 `docker compose up` 一起常驻启动；当你显式执行 `docker compose run --rm client` 时，它会加入同一个 compose 网络并直接连接 `nginx:8000`。
+
+如果将来你需要本机调试方式，可以自己再扩展，但当前仓库官方只支持 Docker 路线。
 
 ---
 

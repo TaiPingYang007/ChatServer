@@ -1,11 +1,79 @@
 #include "../../../include/server/redis/redis.hpp"
 #include "../../../include/server/logger.h"
 
+#include <cstdlib>
 #include <hiredis/hiredis.h>
 #include <hiredis/read.h>
 #include <mutex>
 #include <poll.h>
+#include <string>
 #include <unistd.h>
+
+namespace {
+
+struct RedisConfig {
+  std::string host;
+  int port;
+  std::string password;
+};
+
+std::string getEnvOrDefault(const char *name, const char *defaultValue) {
+  const char *value = std::getenv(name);
+  if (value == nullptr || value[0] == '\0') {
+    return defaultValue;
+  }
+  return value;
+}
+
+int getEnvPortOrDefault(const char *name, int defaultValue) {
+  std::string value = getEnvOrDefault(name, "");
+  if (value.empty()) {
+    return defaultValue;
+  }
+
+  try {
+    int port = std::stoi(value);
+    if (port > 0 && port <= 65535) {
+      return port;
+    }
+  } catch (...) {
+  }
+
+  LOG_ERROR("invalid %s value: %s, fallback to %d", name, value.c_str(),
+            defaultValue);
+  return defaultValue;
+}
+
+RedisConfig loadRedisConfig() {
+  return RedisConfig{getEnvOrDefault("REDIS_HOST", "127.0.0.1"),
+                     getEnvPortOrDefault("REDIS_PORT", 6379),
+                     getEnvOrDefault("REDIS_PASSWORD", "")};
+}
+
+bool authRedisContext(redisContext *context, const RedisConfig &config,
+                      const char *contextName) {
+  if (config.password.empty()) {
+    return true;
+  }
+
+  redisReply *reply = static_cast<redisReply *>(
+      redisCommand(context, "AUTH %s", config.password.c_str()));
+  if (reply == nullptr) {
+    LOG_ERROR("%s auth failed: reply is nullptr", contextName);
+    return false;
+  }
+
+  if (reply->type == REDIS_REPLY_ERROR) {
+    LOG_ERROR("%s auth failed: %s", contextName, reply->str);
+    freeReplyObject(reply);
+    return false;
+  }
+
+  freeReplyObject(reply);
+  return true;
+}
+
+} // namespace
 
 // 构造函数
 Redis::Redis()
@@ -19,8 +87,10 @@ Redis::~Redis() { stop(); }
 
 // 初始化发布上下文连接
 bool Redis::initPublishContext() {
+  const RedisConfig config = loadRedisConfig();
+
   // 使用redisConnect函数连接redis服务器，返回一个redisContext指针
-  _publishContext = redisConnect("127.0.0.1", 6379);
+  _publishContext = redisConnect(config.host.c_str(), config.port);
   if (_publishContext == nullptr) {
     LOG_ERROR("init publish context failed: context is nullptr");
     return false;
@@ -33,32 +103,22 @@ bool Redis::initPublishContext() {
     return false;
   }
 
-  redisReply *reply =
-      (redisReply *)redisCommand(_publishContext, "AUTH %s", "wang112233");
-
-  if (reply == nullptr) {
-    LOG_ERROR("publish context auth failed: reply is nullptr");
+  if (!authRedisContext(_publishContext, config, "publish context")) {
     redisFree(_publishContext);
     _publishContext = nullptr;
     return false;
   }
 
-  if (reply->type == REDIS_REPLY_ERROR) {
-    LOG_ERROR("publish context auth failed: %s", reply->str);
-    freeReplyObject(reply);
-    redisFree(_publishContext);
-    _publishContext = nullptr;
-    return false;
-  }
-
-  freeReplyObject(reply);
-
+  LOG_INFO("redis publish context ready, host=%s port=%d", config.host.c_str(),
+           config.port);
   return true;
 }
 
 // 初始化订阅上下文连接
 bool Redis::initSubscribeContext() {
-  _subscribeContext = redisConnect("127.0.0.1", 6379);
+  const RedisConfig config = loadRedisConfig();
+
+  _subscribeContext = redisConnect(config.host.c_str(), config.port);
   if (_subscribeContext == nullptr) {
     LOG_ERROR("init subscribe context failed: context is nullptr");
     return false;
@@ -68,26 +128,14 @@ bool Redis::initSubscribeContext() {
     LOG_ERROR("init subscribe context failed: %s", _subscribeContext->errstr);
     return false;
   }
-  redisReply *reply =
-      (redisReply *)redisCommand(_subscribeContext, "AUTH %s", "wang112233");
-
-  if (reply == nullptr) {
-    LOG_ERROR("subscribe context auth failed: reply is nullptr");
+  if (!authRedisContext(_subscribeContext, config, "subscribe context")) {
     redisFree(_subscribeContext);
     _subscribeContext = nullptr;
     return false;
   }
 
-  if (reply->type == REDIS_REPLY_ERROR) {
-    LOG_ERROR("subscribe context auth failed: %s", reply->str);
-    freeReplyObject(reply);
-    redisFree(_subscribeContext);
-    _subscribeContext = nullptr;
-    return false;
-  }
-
-  freeReplyObject(reply);
-
+  LOG_INFO("redis subscribe context ready, host=%s port=%d",
+           config.host.c_str(), config.port);
   return true;
 }
 

@@ -1,11 +1,38 @@
 #include "../../../include/server/db/db.h"
 #include "../../../include/server/logger.h"
 
-// 数据库配置信息
-static std::string server = "192.168.195.128";
-static std::string user = "tpy";
-static std::string password = "wang112233";
-static std::string dbname = "ChatServer";
+#include <cstdlib>
+
+namespace {
+
+std::string getEnvOrDefault(const char *name, const char *defaultValue) {
+  const char *value = std::getenv(name);
+  if (value == nullptr || value[0] == '\0') {
+    return defaultValue;
+  }
+  return value;
+}
+
+unsigned int getEnvPortOrDefault(const char *name, unsigned int defaultValue) {
+  std::string value = getEnvOrDefault(name, "");
+  if (value.empty()) {
+    return defaultValue;
+  }
+
+  try {
+    int port = std::stoi(value);
+    if (port > 0 && port <= 65535) {
+      return static_cast<unsigned int>(port);
+    }
+  } catch (...) {
+  }
+
+  LOG_ERROR("invalid %s value: %s, fallback to %u", name, value.c_str(),
+            defaultValue);
+  return defaultValue;
+}
+
+} // namespace
 
 // 初始化数据库连接
 MySQL::MySQL() { _conn = mysql_init(nullptr); }
@@ -13,14 +40,33 @@ MySQL::MySQL() { _conn = mysql_init(nullptr); }
 MySQL::~MySQL() { mysql_close(_conn); }
 // 连接数据库
 bool MySQL::connect() {
-  if (mysql_real_connect(_conn, server.c_str(), user.c_str(), password.c_str(),
-                         dbname.c_str(), 3306, nullptr, 0) != nullptr) {
-    // //C和C++代码默认的编码字符是ASCII,如果不设置,从MySQL上拉下来的中文显示?
-    mysql_query(_conn, "set names gbk");
-    LOG_INFO("connect mysql success!");
+  if (_conn == nullptr) {
+    LOG_ERROR("mysql_init failed");
+    return false;
+  }
+
+  const std::string host = getEnvOrDefault("MYSQL_HOST", "127.0.0.1");
+  const std::string user = getEnvOrDefault("MYSQL_USER", "chatserver_app");
+  const std::string password =
+      getEnvOrDefault("MYSQL_PASSWORD", "chatserver_dev_password");
+  const std::string database =
+      getEnvOrDefault("MYSQL_DATABASE", "chatserver");
+  const unsigned int port = getEnvPortOrDefault("MYSQL_PORT", 3306);
+
+  if (mysql_real_connect(_conn, host.c_str(), user.c_str(), password.c_str(),
+                         database.c_str(), port, nullptr, 0) != nullptr) {
+    if (mysql_set_character_set(_conn, "utf8mb4") != 0) {
+      LOG_ERROR("set mysql charset utf8mb4 failed: %s", mysql_error(_conn));
+      return false;
+    }
+
+    LOG_INFO("connect mysql success! host=%s port=%u db=%s user=%s",
+             host.c_str(), port, database.c_str(), user.c_str());
     return true;
   } else {
-    LOG_ERROR("connect mysql fail!");
+    LOG_ERROR("connect mysql fail! host=%s port=%u db=%s user=%s error=%s",
+              host.c_str(), port, database.c_str(), user.c_str(),
+              mysql_error(_conn));
     return false;
   }
 }

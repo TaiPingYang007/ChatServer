@@ -1,0 +1,7 @@
+.git
+.codex
+.deps
+build
+bin
+*.log
+compile_commands.json

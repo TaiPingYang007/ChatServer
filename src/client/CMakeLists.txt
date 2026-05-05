@@ -4,4 +4,6 @@ set(SRC_FILES main.cpp)
 add_executable(ChatClient ${SRC_FILES})
 
 #指定可执行文件以依赖的库文件
-target_link_libraries(ChatClient pthread)
+target_link_libraries(ChatClient PRIVATE
+    nlohmann_json::nlohmann_json
+    Threads::Threads)
