@@ -15,6 +15,7 @@ connect() 函数发起连接的那一瞬间，由操作系统临时动态分配�
 #include <ctime>
 #include <functional>
 #include <iostream>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <nlohmann/json.hpp>
 #include <semaphore.h>
@@ -55,6 +56,31 @@ void showCurrentUesrInfo();
 // 主聊天页面程序
 void mainMenu(int clientfd);
 
+bool resolveServerAddress(const char *host, uint16_t port,
+                          sockaddr_in *serverAddr) {
+  if (serverAddr == nullptr) {
+    return false;
+  }
+
+  addrinfo hints{};
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+
+  addrinfo *result = nullptr;
+  const std::string portStr = std::to_string(port);
+  const int rc = getaddrinfo(host, portStr.c_str(), &hints, &result);
+  if (rc != 0 || result == nullptr) {
+    if (result != nullptr) {
+      freeaddrinfo(result);
+    }
+    return false;
+  }
+
+  *serverAddr = *reinterpret_cast<sockaddr_in *>(result->ai_addr);
+  freeaddrinfo(result);
+  return true;
+}
+
 // 聊天客户端程序实现，main线程用作发送线程，子线程用作接受线程
 int main(int argc, char **argv) {
   // 检查用户输入
@@ -87,10 +113,11 @@ int main(int argc, char **argv) {
   // std::memset(&server, 0, sizeof(sockaddr_in)); //
   // 初始化server结构体的内存空间
 
-  server.sin_family = AF_INET;
-  server.sin_port = htons(port);
-  server.sin_addr.s_addr = inet_addr(
-      ip); // inet_addr 把你认识的 IP 字符串翻译成网卡认识的二进制数字。
+  if (!resolveServerAddress(ip, port, &server)) {
+    std::cerr << "resolve server address fail!" << "\n";
+    close(clientfd);
+    exit(-1);
+  }
 
   // clinet和server进行连接 将文件描述符与（协议加端口加ip）绑定
   if (connect(clientfd, (sockaddr *)&server, sizeof(sockaddr_in)) == -1) {

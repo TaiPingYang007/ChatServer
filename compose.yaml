@@ -2,6 +2,7 @@ x-app-common: &app-common
   build:
     context: .
     dockerfile: Dockerfile
+    network: host
   image: chatserver:dev
   extra_hosts:
     - "host.docker.internal:host-gateway"

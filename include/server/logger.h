@@ -44,6 +44,10 @@ private:
 #undef LOG_ERROR
 #endif
 
+#ifndef __FILE_NAME__
+#define __FILE_NAME__ __FILE__
+#endif
+
 #define LOG_INFO(logmsgformat, ...)                                            \
   do {                                                                         \
     Logger &logger = Logger::GetInstance();                                    \
