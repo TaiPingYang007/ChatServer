@@ -1,6 +1,10 @@
 .cache
 .deps/
+.codex
+.vscode/
+.idea/
 .env
+compile_commands.json
 build/
 bin/
 *.o
