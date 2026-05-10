@@ -1,5 +1,6 @@
 .cache
 .deps/
+.agents/
 .codex
 .vscode/
 .idea/
@@ -7,4 +8,6 @@
 compile_commands.json
 build/
 bin/
+*.log
 *.o
+test/testjson/testjson
