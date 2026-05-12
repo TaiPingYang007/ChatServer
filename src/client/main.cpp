@@ -1,6 +1,6 @@
 /*
-我现在自己写了一个客户端应用程序。Docker 方案里推荐连接 nginx:8000，
-本质上仍然是去连接目标服务器的地址和端口。早期示例里常写 127.0.0.1:6000
+我现在自己写了一个客户端应用程序。模式 A 下推荐本地连接 127.0.0.1:8000，
+本质上仍然是去连接目标服务器的地址和端口。也可以直连 127.0.0.1:6000
 是我要去连接的目标服务器的地址和端口（就跟之前用 telnet
 指定的一样）。而我的客户端程序自己身上用于发报和接收的真正通信端口（接口），并不是我自己写的，而是代码跑起来、用户真正触碰到底层
 connect() 函数发起连接的那一瞬间，由操作系统临时动态分配给这个程序的！
@@ -85,7 +85,7 @@ bool resolveServerAddress(const char *host, uint16_t port,
 int main(int argc, char **argv) {
   // 检查用户输入
   if (argc < 3) {
-    std::cerr << "command invalid! example: ./ChatClient nginx 8000"
+    std::cerr << "command invalid! example: ./ChatClient 127.0.0.1 8000"
               << "\n";
     exit(-1);
   }

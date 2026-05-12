@@ -9,7 +9,7 @@ if (NOT DEFINED MUDUO_ROOT OR MUDUO_ROOT STREQUAL "")
     if (DEFINED ENV{MUDUO_ROOT} AND NOT "$ENV{MUDUO_ROOT}" STREQUAL "")
         set(MUDUO_ROOT "$ENV{MUDUO_ROOT}" CACHE PATH "Muduo installation prefix.")
     else()
-        set(MUDUO_ROOT "${CHATSERVER_DEPS_DIR}/muduo/install" CACHE PATH
+        set(MUDUO_ROOT "/usr/local" CACHE PATH
             "Muduo installation prefix.")
     endif()
 endif()
@@ -50,8 +50,7 @@ if (NOT CHATSERVER_MUDUO_INCLUDE_DIR OR
     NOT CHATSERVER_MUDUO_BASE_LIBRARY)
     message(FATAL_ERROR
         "Muduo was not found under ${MUDUO_ROOT}. "
-        "Dockerfile prepares this dependency during image build. "
-        "If you are debugging locally, set MUDUO_ROOT to a valid install prefix.")
+        "For mode A, install muduo locally (recommended: /usr/local) or set MUDUO_ROOT explicitly.")
 endif()
 
 get_filename_component(CHATSERVER_MUDUO_LIB_DIR
