@@ -1,10 +1,3 @@
-include(FetchContent)
-
-set(CHATSERVER_DEPS_DIR "${CMAKE_SOURCE_DIR}/.deps" CACHE PATH
-    "Directory used for locally managed third-party dependencies.")
-set(FETCHCONTENT_BASE_DIR "${CHATSERVER_DEPS_DIR}/fetchcontent" CACHE PATH
-    "Persistent cache for FetchContent dependencies.")
-
 if (NOT DEFINED MUDUO_ROOT OR MUDUO_ROOT STREQUAL "")
     if (DEFINED ENV{MUDUO_ROOT} AND NOT "$ENV{MUDUO_ROOT}" STREQUAL "")
         set(MUDUO_ROOT "$ENV{MUDUO_ROOT}" CACHE PATH "Muduo installation prefix.")
@@ -14,13 +7,7 @@ if (NOT DEFINED MUDUO_ROOT OR MUDUO_ROOT STREQUAL "")
     endif()
 endif()
 
-FetchContent_Declare(
-    nlohmann_json
-    GIT_REPOSITORY https://github.com/nlohmann/json.git
-    GIT_TAG v3.11.3
-    GIT_SHALLOW TRUE
-)
-FetchContent_MakeAvailable(nlohmann_json)
+find_package(nlohmann_json 3 REQUIRED)
 
 find_path(CHATSERVER_MUDUO_INCLUDE_DIR
     NAMES muduo/net/EventLoop.h

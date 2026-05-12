@@ -417,8 +417,13 @@ void Redis::listenerLoop() {
     // 如果fds[0]的revents成员中包含POLLIN事件，说明监听线程被唤醒了，此时需要处理安全队列中的命令
     if (fds[0].revents & POLLIN) {
       char buffer[64] = {0};
-      read(_wakeupFds[0], buffer,
-           sizeof(buffer)); // 读取数据，清空管道，准备下一次唤醒
+      ssize_t n = read(_wakeupFds[0], buffer,
+                       sizeof(buffer)); // 读取数据，清空管道，准备下一次唤醒
+      if (n == -1) {
+        LOG_ERROR("read wakeup signal failed");
+        _running.store(false);
+        break;
+      }
       // 处理安全队列中的命令
       handlePendingCommands();
     }

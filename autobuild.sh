@@ -6,7 +6,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="${SCRIPT_DIR}"
 BUILD_DIR="${PROJECT_ROOT}/build"
 
+rm -rf "${BUILD_DIR}"
 mkdir -p "${BUILD_DIR}"
+rm -f "${PROJECT_ROOT}/compile_commands.json"
 
 cmake -S "${PROJECT_ROOT}" -B "${BUILD_DIR}" -DCMAKE_BUILD_TYPE=Release
 cmake --build "${BUILD_DIR}" -j"$(nproc)"
