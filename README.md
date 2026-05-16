@@ -118,18 +118,29 @@ cmake --build build -j"$(nproc)"
 - `bin/ChatServer`
 - `bin/ChatClient`
 
+## 启动前先加载环境变量
+
+`ChatServer` 和本地模式下的 `Redis` / `MySQL` 连接参数来自 `.env`。  
+每次准备启动本地服务端前，建议先在当前终端执行：
+
+```bash
+set -a
+source .env
+set +a
+```
+
 ## 本地运行服务端
 
 启动节点 1：
 
 ```bash
-./bin/ChatServer 127.0.0.1 6000
+./bin/ChatServer 0.0.0.0 6000
 ```
 
 启动节点 2：
 
 ```bash
-./bin/ChatServer 127.0.0.1 6002
+./bin/ChatServer 0.0.0.0 6002
 ```
 
 说明：
@@ -139,6 +150,7 @@ cmake --build build -j"$(nproc)"
 - `nginx` 会转发到宿主机本地的：
   - `6000`
   - `6002`
+- 因为 `nginx` 是 Docker 容器，所以本地 `ChatServer` 必须绑定 `0.0.0.0`，不能只绑定 `127.0.0.1`
 
 ## 本地运行客户端
 
@@ -172,8 +184,9 @@ cp .env.example .env
 MYSQL_ROOT_PASSWORD=你的_mysql_root_密码 ./scripts/bootstrap-shared-mysql.sh
 docker compose up -d
 ./autobuild.sh
-./bin/ChatServer 127.0.0.1 6000
-./bin/ChatServer 127.0.0.1 6002
+set -a && source .env && set +a
+./bin/ChatServer 0.0.0.0 6000
+./bin/ChatServer 0.0.0.0 6002
 ./bin/ChatClient 127.0.0.1 8000
 ```
 
@@ -183,8 +196,9 @@ docker compose up -d
 cd ~/projects/cpp_project/02_cluster_chat_server/ChatServer
 docker compose up -d
 ./autobuild.sh
-./bin/ChatServer 127.0.0.1 6000
-./bin/ChatServer 127.0.0.1 6002
+set -a && source .env && set +a
+./bin/ChatServer 0.0.0.0 6000
+./bin/ChatServer 0.0.0.0 6002
 ./bin/ChatClient 127.0.0.1 8000
 ```
 
@@ -213,8 +227,8 @@ docker exec -it mysql_db mysql -uchatserver_app -pchatserver_dev_password -D cha
 
 1. 启动 `redis` 和 `nginx`
 2. 本地开两个 `ChatServer` 节点：
-   - `6000`
-   - `6002`
+   - `./bin/ChatServer 0.0.0.0 6000`
+   - `./bin/ChatServer 0.0.0.0 6002`
 3. 本地开两个客户端
 4. 一个客户端连 `8000`
 5. 再结合服务端日志，确认不同节点之间能通过 Redis 转发消息

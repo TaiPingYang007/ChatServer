@@ -8,6 +8,7 @@
 compile_commands.json
 build/
 bin/
+graphify-out/
 *.log
 *.o
 test/testjson/testjson
